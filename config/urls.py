@@ -17,11 +17,21 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from authentication.views import UserViewSet, AuthViewSet
+
+router = DefaultRouter()
+router.register('auth', AuthViewSet, basename='auth')
+router.register('users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', lambda request: redirect('admin/', permanent=True)),
+    path('admin/', admin.site.urls, name='admin'),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/', include(router.urls)),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
